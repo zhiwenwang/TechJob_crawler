@@ -25,13 +25,13 @@ def parse_content(url)
             count = count +1
             articles_of_page.push({:post_id=>post_id, :link_url=>link, :title=>title, :content=>content_text})
         end
-        puts "GET____ARTICLES:#{articles_of_page.length}"
+#          puts "GET____ARTICLES:#{articles_of_page.length}"
         articles_of_page.each do |a|
             puts "TITLE____:#{a[:title]}"
         end
     rescue 
         puts "FQ   REREY"
-        sleep 5.3
+        sleep 3
         parse_content(url)
     end
 end
@@ -42,21 +42,14 @@ html = index_doc.css("//div[@class='btn-group pull-right']").css('/a[@class]').t
 page_number = html[1]['href'].split("/")[3][5..8].to_i
 page_number.times do |link_number|
 link_number = html[1]['href'].split("/")[3][5..8].to_i
-puts page_number 
 page_number -=1
 url = host+ "/bbs/Tech_Job/index#{page_number}.html"
+puts url 
 first_page = url
 parse_content(url)
-parse_content(first_page)
 end
 
 
-#  pg_idx = 2018
-#  20.times do |gg|
-#      pg_idx-=1
-#      puts "IDX:#{pg_idx}"
-#      url = host+"/bbs/Tech_Job/index#{pg_idx.to_s}.html"
-#      parse_content(url)
 
 #              if html[1]['href'] == nil
 #                  url = index_url
