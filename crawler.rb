@@ -5,7 +5,6 @@ host ="https://www.ptt.cc"
 doc = String
 data, link, post_id, articles_of_page= []
 doc_article, title, content_text = String
-#  next_page = html[2]['href']#下頁
 #  previous_page = html[1]['href']#上頁
 count = Integer
 
@@ -39,14 +38,24 @@ end
 first_page = host + "/bbs/Tech_Job/index.html"
 index_doc = Nokogiri::HTML(open(first_page))
 html = index_doc.css("//div[@class='btn-group pull-right']").css('/a[@class]').to_a
+next_page = html[2]['href']#下頁
+if next_page == nil
+    url = host+ "/bbs/Tech_Job/index.html"
+    parse_content(url)
+end
 page_number = html[1]['href'].split("/")[3][5..8].to_i
 page_number.times do |link_number|
-link_number = html[1]['href'].split("/")[3][5..8].to_i
+#  link_number = html[1]['href'].split("/")[3][5..8].to_i
+    
+    
+    
+    
 page_number -=1
 url = host+ "/bbs/Tech_Job/index#{page_number}.html"
 puts url 
 first_page = url
 parse_content(url)
+break if page_number == 0
 end
 
 
