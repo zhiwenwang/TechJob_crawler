@@ -12,6 +12,7 @@ doc_article, title, ptt_link, ptt_id = String
 json_file = "./ptt.json"
 count = Integer
 contents = String
+#  regex =gsub("'", '\\').gsub("：",'\\').gsub(";",'\\').gsub("$",'\\').gsub(",",'\\').gsub("，",'\\').gsub    ("！",'\\').gsub("～",'\\').gsub("~",'\\').gsub("/\s",' ') 
 #  ptt_tag=%w(看板,標題,作者)
 
 def parse_content(url)
@@ -35,17 +36,17 @@ client = Mysql2::Client.new(:host => "localhost", :username => "root", :password
             type = content_text[/\看板\<\/span><span class=\"article-meta-value\">(.*?)<\/span>/m, 1]
             author = content_text[/<span class=\"article-meta-value\">(.+?)<\/span>/m, 1]
             # 作者
-            title = content_text[/<span class=\"article-meta-tag\">標題<\/span><span class=\"article-meta-value\">(.*?)<\/span>/m, 1]
+            title = content_text[/<span class=\"article-meta-tag\">標題<\/span><span class=\"article-meta-value\">(.*?)<\/span>/m, 1].to_json.gsub("'",'\\')
             #標題
-            contents = content_text[/\w{3}\s\w{3}\s\d{2}\s\d{2}:\d{2}:\d{2}\s\d{4}(.+?)※ 發信站/m, 1].to_s
-            #內文
+            contents = content_text[/\w{3}\s\w{3}\s\d{2}\s\d{2}:\d{2}:\d{2}\s\d{4}(.+?)※ 發信站/m, 1].to_json.gsub("'",'\\')
+			#內文
             count +=1
-            result = client.query("INSERT INTO posts (ptt_post_id, ptt_post_link, name, content) VALUES ('#{ptt_id}', '#{ptt_link}', '#{title}', '#{contents.gsub("'","\\")}')")
-            sleep 1
+            result = client.query("INSERT INTO posts (ptt_post_id, ptt_post_link, name, content) VALUES ('#{ptt_id}', '#{ptt_link}', '#{title}', '#{contents}')")          
+			 sleep 0.1
         end
         rescue Errno::ECONNRESET =>e
             puts e
-                sleep 3
+                sleep 1
                 retry
         end
 end
@@ -66,6 +67,6 @@ url = host+ "/bbs/Beauty/index#{page_number}.html"
 puts url 
 first_page = url
 parse_content(url)
-sleep 1
+#  sleep 0.1
 break if page_number == 0
 end
